@@ -19,7 +19,7 @@ class Main {
 	}
 
 	async #setup() {
-		await this.grid.loadFile("./../data/1.txt");
+		await this.grid.loadFile("data/1.txt");
 
 		this.#invalidate();
 	}
