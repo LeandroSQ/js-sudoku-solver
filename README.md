@@ -12,6 +12,8 @@ Simple greedy algorithm to solve Sudoku puzzles.
     </small>
 </center>
 
+[Live demo](https://leandrosq.github.io/js-sudoku-solver/)
+
 ---
 
 ## How to use it
