@@ -3,9 +3,9 @@
 Simple greedy algorithm to solve Sudoku puzzles.
 
 <center>
-    <p float="left">
-        <img src=".github/screenshot01.png" style="max-width: 40vw"/>
-        <img src=".github/screenshot02.png" style="max-width: 40vw"/>
+    <p float="left" align="center">
+        <img src=".github/screenshot01.png" style="width: 40%"/>
+        <img src=".github/screenshot02.png" style="width: 40%"/>
     </p>
 </center>
 
@@ -25,24 +25,21 @@ On the folder [src/data](src/data) you can find a file with the Sudoku to solve.
 
 The format on it will be:
 
-<center>
-    <code>
-        2 X 9 X X X 6 X X<br/>
-        X 4 X 8 7 X X 1 2<br/>
-        8 X X X 1 9 X 4 X<br/>
-        X 3 X 7 X X 8 X 1<br/>
-        X 6 5 X X 8 X 3 X<br/>
-        1 X X X 3 X X X 7<br/>
-        X X X 6 5 X 7 X 9<br/>
-        6 X 4 X X X X 2 X<br/>
-        X 8 X 3 X 1 4 5 X<br/>
-    </code>
-</center>
-<center>
-    <small>
-        <i>Where 'X' is an empty cell.</i>
-    </small>
-</center>
+<span align="center">
+    
+    2 X 9 X X X 6 X X
+    X 4 X 8 7 X X 1 2
+    8 X X X 1 9 X 4 X
+    X 3 X 7 X X 8 X 1
+    X 6 5 X X 8 X 3 X
+    1 X X X 3 X X X 7
+    X X X 6 5 X 7 X 9
+    6 X 4 X X X X 2 X
+    X 8 X 3 X 1 4 5 X
+</span>
+<p align="center">
+    <i>Where 'X' is an empty cell.</i>
+</p>
 
 To start the solver, just click on the board.
 Tha algorithm is animated, so you can see the steps.
