@@ -31,6 +31,8 @@ canvas {
     border-radius: 2.5%;
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0px 5px 20px 2px rgb(0, 0, 0, 0.1);
+
+    animation: scale-in-center 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -44,4 +46,22 @@ canvas {
         --board-guess-color: #7f8c8d;
     }
 
+}
+
+@keyframes scale-in-center {
+    0% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    80% {
+        opacity: 1;
+    }
+
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 1;
+    }
 }

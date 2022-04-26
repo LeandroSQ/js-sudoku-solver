@@ -10,6 +10,7 @@ class Main {
 		this.subGridSize = 3;
 		this.subGridCount = 3;
 		this.gridSize = this.subGridSize * this.subGridCount;
+		this.fontLoaded = false;
 
 		// Components
 		this.canvas = new Canvas(this);
@@ -24,25 +25,26 @@ class Main {
 	async #setup() {
 		await this.grid.loadFile("data/2.txt");
 
-		this.#waitForFonts();
+		// Waits for the page to load
+		window.addEventListener("load", this.#preloadFonts.bind(this));
+		window.addEventListener("DOMContentLoaded", this.#preloadFonts.bind(this));
+		setTimeout(this.#preloadFonts.bind(this), 50);
 	}
 
-	#waitForFonts() {
-		// Waits for the page to load
-		window.addEventListener("load", async () => {
-			const font = this.canvas.font;
+	async #preloadFonts() {
+		if (this.fontLoaded) return;
 
-			if (!document.fonts.check(font))
-				await document.fonts.load(font);
+		const font = this.canvas.font;
 
-			this.invalidate();
-		});
+		if (!document.fonts.check(font)) await document.fonts.load(font);
+		this.fontLoaded = true;
+
+		this.invalidate();
 	}
 
 	render() {
 		this.grid.render(this.canvas);
 
-		//this.invalidate();
 	}
 
 	invalidate() {
