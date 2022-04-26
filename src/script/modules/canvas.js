@@ -55,6 +55,22 @@ export class Canvas {
 		this.element.addEventListener("click", this.#onClickHook.bind(this));
 	}
 
+	screenshot() {
+		// Get the image data
+		const data = this.element.toDataURL("image/png");
+
+		// Create a new anchor element
+		const link = document.createElement("a");
+		link.style.display = "none";
+		link.href = data;
+		link.download = "sudoku.png";
+
+		// Append to the document, simulate click and then remove it
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	}
+
 	get font() {
 		const MIN = 8;
 		const MAX = 24;

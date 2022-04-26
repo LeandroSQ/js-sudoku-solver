@@ -70,28 +70,14 @@ export class Grid {
 					this.data[y][x] = new Cell(x, y, null, Cell.SET_BY_USER);
 				} else if (char >= "1" && char <= "9") {
 					// Value cell
-					this.data[y][x] = new Cell(
-						x,
-						y,
-						parseInt(char),
-						Cell.SET_BY_USER
-					);
-				}
-			}
-		}
-
-		for (let y = 0; y < this.data.length; y++) {
-			for (let x = 0; x < this.data[y].length; x++) {
-				const cell = this.data[y][x];
-				if (x !== cell.x || y !== cell.y) {
-					console.warn("Cell coordinates are not correct!");
-					console.warn(`Expected: (${x}, ${y})`);
-					console.warn(`Actual: (${cell.x}, ${cell.y})`);
+					this.data[y][x] = new Cell( x, y, parseInt(char), Cell.SET_BY_USER);
 				}
 			}
 		}
 
 		// Prints out the grid
+		console.group("Loaded grid!");
+
 		console.table(
 			this.data.map((x) => x.map((y) => (y.value || " ").toString()))
 		);
@@ -99,6 +85,8 @@ export class Grid {
 		// Checks if the grid is valid
 		if (!this.isValid()) console.error("Invalid grid loaded!");
 		else console.log(`%cGrid loaded successfully!`, "color: lime");
+
+		console.groupEnd();
 	}
 	//#endregion
 
