@@ -14,13 +14,34 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #1b232c;
+    background-color: var(--background);
     margin: 20pt;
     width: calc(100vw - 40pt);
     height: calc(100vh - 40pt);
+
+    --background: #ccc;
+    --board-background: #fff;
+    --board-grid-color: #eee;
+    --board-subgrid-color: #f4f4f4;
+    --board-text-color: #62a1fe;
+    --board-guess-color: #bbb;
 }
 
 canvas {
-    border-radius: 5pt;
-    box-shadow: 0px 5px 20px 2px rgb(0, 0, 0, 0.2);
+    border-radius: 2.5%;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 5px 20px 2px rgb(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+
+    body {
+        --background: #1b232c;
+        --board-background: #2c3e50;
+        --board-grid-color: #42586c;
+        --board-subgrid-color: #34495e;
+        --board-text-color: #ecf0f1;
+        --board-guess-color: #7f8c8d;
+    }
+
 }

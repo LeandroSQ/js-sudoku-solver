@@ -54,6 +54,33 @@ export class Canvas {
 
 		this.element.addEventListener("click", this.#onClickHook.bind(this));
 	}
+
+	get font() {
+		const MIN = 8;
+		const MAX = 24;
+		const SMOOTH = 4;
+
+		// Calculate based on the canvas size
+		const viewport = (this.width + this.height) / 2;
+		const fontSize = Math.pow(viewport / 875, SMOOTH) * (MAX - MIN) + MIN;
+
+		// Clamp values
+		const clampedFontSize = Math.floor(Math.min(Math.max(fontSize, MIN), MAX * 2));
+
+		return `bold ${clampedFontSize}pt 'Bebas Neue'`;
+	}
+
+	get width() {
+		return this.element.width;
+	}
+
+	get height() {
+		return this.element.height;
+	}
+
+	get context() {
+		return this.ctx;
+	}
 }
 
 // Extensions

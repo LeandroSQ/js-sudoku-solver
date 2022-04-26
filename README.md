@@ -3,7 +3,10 @@
 Simple greedy algorithm to solve Sudoku puzzles.
 
 <center>
-    <img src=".github/screenshot01.png" style="max-height: 600px"/>
+    <p float="left">
+        <img src=".github/screenshot01.png" style="max-width: 40vw"/>
+        <img src=".github/screenshot02.png" style="max-width: 40vw"/>
+    </p>
 </center>
 
 <center>
