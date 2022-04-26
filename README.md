@@ -26,7 +26,7 @@ On the folder [src/data](src/data) you can find a file with the Sudoku to solve.
 The format on it will be:
 
 <span align="center">
-    
+
     2 X 9 X X X 6 X X
     X 4 X 8 7 X X 1 2
     8 X X X 1 9 X 4 X
@@ -69,3 +69,11 @@ Made with:
 - [HTML5 Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)
 - [CSS3](https://developer.mozilla.org/en-US/docs/Web/CSS)
 - [HTML5](https://developer.mozilla.org/en-US/docs/Web/HTML)
+
+### Features
+
+- Memoization technique
+- Animation
+- Solving Sudoku
+- Metrics (See the console for details)
+- Light and dark themes (default: light)
