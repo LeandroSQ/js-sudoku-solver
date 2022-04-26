@@ -131,11 +131,12 @@ CanvasRenderingContext2D.prototype.drawTextCentered = function(x, y, text, color
 		measurements = CanvasRenderingContext2D._measurementsCache[text];
 	} else {
 		measurements = this.measureText(text);
-
-		CanvasRenderingContext2D._measurementsCache[text] = {
+		measurements = {
 			horizontal: measurements.width / 2,
 			vertical: (measurements.actualBoundingBoxAscent + measurements.actualBoundingBoxDescent) / 2
 		};
+
+		CanvasRenderingContext2D._measurementsCache[text] = measurements;
 	}
 
 	this.fillText(text, x - measurements.horizontal, y + measurements.vertical);
