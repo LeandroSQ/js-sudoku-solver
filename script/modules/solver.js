@@ -1,8 +1,13 @@
 import { Cell } from "./cell.js";
 
 export class Solver {
+
 	constructor(main) {
 		this.main = main;
+		this.cache = null;
+		this.empty = [];
+		this.iterations = 0;
+		this.backtracks = 0;
 	}
 
 	get grid() {
@@ -13,6 +18,12 @@ export class Solver {
 	}
 
 	clearSolution() {
+		this.cache = null;
+		this.empty = [];
+		this.iterations = 0;
+		this.backtracks = 0;
+
+		// Removes all the guesses made by the solver
 		for (let y = 0; y < this.grid.size; y++) {
 			for (let x = 0; x < this.grid.size; x++) {
 				const cell = this.grid.getCell(x, y);
@@ -23,7 +34,27 @@ export class Solver {
 		}
 	}
 
+	#preCachePossibilities() {
+		// Purge cache
+		this.cache = { };
+
+		// Find all empty cells
+		const cells = this.grid.data.map(row => row.filter(cell => cell.isEmpty())).flat();
+
+		// Save all the empty cells
+		this.empty = cells;
+
+		// For each empty cell, find all possible values
+		for (const cell of cells) {
+			const id = `${cell.x},${cell.y}`;
+
+			this.cache[id] = this.#findPossibleValues(cell);
+		}
+	}
+
 	async solve() {
+		if (!this.cache) this.#preCachePossibilities();
+
 		// Solve the grid
 		// 1. Find the first empty cell
 		// 2. Find all possible values for the cell
@@ -49,17 +80,24 @@ export class Solver {
 
 		// For each possible value
 		for (let i = 0; i < possibleValues.length; i++) {
+			// Remove from the empty cell list
+			this.empty.splice(this.empty.indexOf(cell), 1);
+
 			// Set the value
 			cell.value = possibleValues[i];
 			cell.setBy = Cell.SET_BY_SOLVER;
 
-			this.main.render(false);
+			// Render the grid again
+			setTimeout(() => this.main.invalidate(), 0);
 
 			// Solve the grid
 			if (await this.postSolve(0)) return true;
 
 			// If the grid is not solved, reset the value and go to step 1
 			cell.value = null;
+
+			// Add it to the empty cell list
+			this.empty.push(cell);
 		}
 	}
 
@@ -72,40 +110,31 @@ export class Solver {
 	}
 
 	#findFirstEmptyCell() {
-		const random = Math.random();
+		if (this.cache) {
+			// Find the empty cell with the lowest number of possible values
+			let cell = null;
+			let minPossibleValues = Infinity;
 
-		if (random <= 0.33) {
-			for (let y = this.grid.size - 1; y >= 0; y--) {
-				for (let x = this.grid.size - 1; x >= 0; x--) {
-					const cell = this.grid.getCell(x, y);
+			for (const c of this.empty) {
+				const id = `${c.x},${c.y}`;
+				const possibleValues = this.cache[id];
 
-					if (cell.isEmpty()) return cell;
+				if (possibleValues.length < minPossibleValues) {
+					cell = c;
+					minPossibleValues = possibleValues.length;
 				}
 			}
-		} else if (random <= 0.66) {
-			for (let y = 0; y < this.grid.size; y++) {
-				for (let x = 0; x < this.grid.size; x++) {
-					const cell = this.grid.getCell(x, y);
 
-					if (cell.isEmpty()) return cell;
-				}
-			}
+			if (cell) return cell;
 		} else {
-			// Randomly pick an empty cell from the grid
-			const cells = [];
-
+			// If the cache is not available, find the first empty cell by brute force
 			for (let y = 0; y < this.grid.size; y++) {
 				for (let x = 0; x < this.grid.size; x++) {
+					// Top-left
 					const cell = this.grid.getCell(x, y);
 
-					if (cell.isEmpty()) cells.push(cell);
+					if (cell.isEmpty()) return cell;
 				}
-			}
-
-			if (cells.length > 0) {
-				const cell = cells[Math.floor(Math.random() * cells.length)];
-
-				return cell;
 			}
 		}
 
@@ -113,6 +142,11 @@ export class Solver {
 	}
 
 	#findPossibleValues(cell) {
+		// Check cache first
+		const id = `${cell.x},${cell.y}`;
+		if (this.cache[id]) return this.cache[id];
+
+		// Otherwise find all possible values within the cell's row, column, and subgrid
 		const possibleValues = [];
 
 		nearest_loop:
@@ -145,4 +179,5 @@ export class Solver {
 
 		return possibleValues;
 	}
+
 }

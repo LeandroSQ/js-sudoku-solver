@@ -1,3 +1,4 @@
+import { Canvas } from "./canvas.js";
 import { Cell } from "./cell.js";
 
 export class Grid {
@@ -36,6 +37,10 @@ export class Grid {
 
 	set size(value) {
 		this.main.size = value;
+	}
+
+	get theme() {
+		return this.main.theme;
 	}
 	//#endregion
 
@@ -124,52 +129,24 @@ export class Grid {
 	//#endregion
 
 	//#region Rendering
-	#calculateFontSize({ width, height }) {
-		const MIN = 8;
-		const MAX = 24;
-		const SMOOTH = 4;
-
-		// Calculate based on the canvas size
-		let viewport = (width + height) / 2;
-		let size = Math.pow(viewport / 875, SMOOTH) * (MAX - MIN) + MIN;
-
-		// Clamp values
-		return Math.min(Math.max(size, MIN), MAX * 2);
-	}
-
-	/** @param {CanvasRenderingContext2D} ctx */
-	render(ctx) {
-		// Define constants
-		const backgroundColor = "#2c3e50";
-		const subGridStrokeColor = "#34495e";
-		const gridStrokeColor = "#42586c";
-		const cellTextColor = {
-			[Cell.SET_BY_SOLVER]: "#7f8c8d",
-			[Cell.SET_BY_USER]: "#ecf0f1",
-		};
+	/** @param {Canvas} canvas */
+	render(canvas) {
+		/** @type {CanvasRenderingContext2D} */
+		const ctx = canvas.context;
 
 		// Draws background
-		ctx.fillWithColor(backgroundColor);
+		ctx.fillWithColor(this.theme.boardBackground);
 
 		// Calculate the font size
-		const fontSize = this.#calculateFontSize(ctx.canvas);
-		ctx.font = `bold ${fontSize}pt 'Bebas Neue'`;
+		ctx.font = canvas.font;
 
 		// Calculate the cell size
-		const cellSize = Math.floor(
-			(ctx.canvas.width + ctx.canvas.height) / 2 / this.size
-		);
+		const cellSize = Math.floor((ctx.canvas.width + ctx.canvas.height) / 2 / this.size);
 
 		// Draws the sub grid
-		this.#drawGrid(ctx, this.size, cellSize, subGridStrokeColor, 1.5);
+		this.#drawGrid(ctx, this.size, cellSize, this.theme.boardSubgridColor, 1.5);
 		// Draws the grid
-		this.#drawGrid(
-			ctx,
-			this.subGridCount,
-			cellSize * this.subGridCount,
-			gridStrokeColor,
-			2.5
-		);
+		this.#drawGrid(ctx, this.subGridCount, cellSize * this.subGridCount, this.theme.boardGridColor, 2.5);
 
 		// Draws the cells
 		for (let y = 0; y < this.size; y++) {
@@ -182,12 +159,7 @@ export class Grid {
 				const cellY = y * cellSize + cellSize / 2;
 
 				// Draws text
-				ctx.drawTextCentered(
-					cellX,
-					cellY,
-					cell.value.toString(),
-					cellTextColor[cell.setBy]
-				);
+				ctx.drawTextCentered(cellX, cellY, cell.value.toString(), this.theme.getCellTextColor(cell));
 			}
 		}
 	}
@@ -278,4 +250,5 @@ export class Grid {
 		return true;
 	}
 	//#endregion
+
 }
