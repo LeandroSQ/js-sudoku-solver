@@ -8,6 +8,8 @@ export class Solver {
 		this.empty = [];
 		this.iterations = 0;
 		this.backtracks = 0;
+		this.startTime = null;
+		this.animationTimer = 0;
 	}
 
 	get grid() {
@@ -22,14 +24,15 @@ export class Solver {
 		this.empty = [];
 		this.iterations = 0;
 		this.backtracks = 0;
+		this.startTime = null;
+		this.animationTimer = 0;
 
 		// Removes all the guesses made by the solver
 		for (let y = 0; y < this.grid.size; y++) {
 			for (let x = 0; x < this.grid.size; x++) {
 				const cell = this.grid.getCell(x, y);
 
-				if (cell.isNotEmpty() && cell.setBy == Cell.SET_BY_SOLVER)
-					cell.value = null;
+				if (cell.isNotEmpty() && cell.setBy == Cell.SET_BY_SOLVER) cell.value = null;
 			}
 		}
 	}
@@ -52,8 +55,23 @@ export class Solver {
 		}
 	}
 
+	#onSolutionFound() {
+		if (this.grid.isValid()) {
+			console.group("Grid solved!");
+			console.log(`Iterations: ${this.iterations}`);
+			console.log(`Backtracks: ${this.backtracks}`);
+			console.log(`Time to solve it: ${Math.ceil(performance.now() - this.startTime - this.animationTimer)}ms`);
+			console.log(`Animation time: ${Math.ceil(this.animationTimer)}ms`);
+			console.groupEnd();
+		} else {
+			console.error(`Grid is not valid!`);
+		}
+	}
+
 	async solve() {
-		if (!this.cache) this.#preCachePossibilities();
+		if (!this.startTime) this.startTime = performance.now();
+
+		this.#preCachePossibilities();
 
 		// Solve the grid
 		// 1. Find the first empty cell
@@ -70,8 +88,8 @@ export class Solver {
 
 		// If the grid is solved, return
 		if (!cell) {
-			console.log(`Grid solved!`);
-			console.log(this.grid.isValid());
+			this.#onSolutionFound();
+
 			return true;
 		}
 
@@ -88,13 +106,16 @@ export class Solver {
 			cell.setBy = Cell.SET_BY_SOLVER;
 
 			// Render the grid again
-			setTimeout(() => this.main.invalidate(), 0);
+			this.main.invalidate();
+			this.iterations++;
 
 			// Solve the grid
-			if (await this.postSolve(0)) return true;
+			// if (await this.solve()) return true;// Instant solve
+			if (await this.postSolve(0)) return true; // Animates steps
 
 			// If the grid is not solved, reset the value and go to step 1
 			cell.value = null;
+			this.backtracks++;
 
 			// Add it to the empty cell list
 			this.empty.push(cell);
@@ -102,10 +123,15 @@ export class Solver {
 	}
 
 	async postSolve(delay) {
+		const start = performance.now();
+
 		// Wait for the delay
 		await new Promise((resolve) => setTimeout(resolve, delay));
 
-		// Render the grid
+		// Take into account the delay
+		this.animationTimer += performance.now() - start;
+
+		// Tries to solve the grid
 		return await this.solve();
 	}
 
@@ -144,7 +170,7 @@ export class Solver {
 	#findPossibleValues(cell) {
 		// Check cache first
 		const id = `${cell.x},${cell.y}`;
-		if (this.cache[id]) return this.cache[id];
+		if (this.cache && this.cache[id]) return this.cache[id];
 
 		// Otherwise find all possible values within the cell's row, column, and subgrid
 		const possibleValues = [];
